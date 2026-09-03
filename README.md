@@ -2,6 +2,8 @@
 
 Productieklare Next.js-dashboardstarter voor het onderzoeken van Stock Token-liquiditeit op Robinhood Chain. Het dashboard combineert meme-basisvraag van StonksOnChain, assetverificatie via Rialto en RWA-poolmetrics van Revert Finance.
 
+De interface gebruikt een eigen terminaldesign dat de ruwe datadichtheid van VFAT combineert met Bloomberg-achtige marktconventies: monospaced typografie, functietoetsnavigatie, zwarte panelen, oranje systeemstatus, groene rendementen, cyaan liquiditeit en compacte tabellen. Er zijn geen merkassets of exacte schermen gekopieerd.
+
 > Researchtool, geen financieel advies. Stock Tokens zijn volgens de Robinhood-documentatie schuldinstrumenten en geven geen aandeelhoudersrechten in het onderliggende aandeel.
 
 ## Strategie
