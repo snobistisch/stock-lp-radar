@@ -1,83 +1,83 @@
-# Data en onderhoud
+# Data and maintenance
 
-## Huidige modus
+## Current mode
 
-De app gebruikt standaard `DATA_SOURCE=static`. De genormaliseerde snapshot staat in `lib/data/static.ts` en is gemeten op **2026-09-03T17:04:28Z**. `generatedAt` verandert bij een refresh; `measuredAt` niet. Dit onderscheid voorkomt dat oude marktdata als live data wordt gepresenteerd.
+The app uses `DATA_SOURCE=static` by default. The normalized snapshot lives in `lib/data/static.ts` and was measured at **2026-09-03T17:04:28Z**. `generatedAt` changes after a refresh; `measuredAt` does not. This distinction prevents historical market data from being presented as live data.
 
-De marktsamenvatting is berekend uit de 100 RWA-poolrijen die Revert in de Robinhood-filter toonde:
+The market summary was calculated from the 100 RWA pool rows shown by Revert under the Robinhood filter:
 
-| Universum | Pools | TVL | 24u volume |
+| Universe | Pools | TVL | 24h volume |
 |---|---:|---:|---:|
-| Alle getoonde RWA-pools | 100 | $45.785.799 | $337.491.251 |
-| Stock Token/USDG of Stock Token/WETH | 84 | $40.102.862 | $312.530.975 |
+| All displayed RWA pools | 100 | $45,785,799 | $337,491,251 |
+| Stock Token/USDG or Stock Token/WETH | 84 | $40,102,862 | $312,530,975 |
 
-De opportunitytabel is een gecureerde shortlist, niet alle 84 kandidaten.
+The opportunity table is a curated shortlist, not the full set of 84 candidates.
 
-## Bronnen
+## Sources
 
-- [StonksOnChain](https://stonksonchain.lol/) — meme-pair count en populariteitsvolume
-- [Rialto Assets](https://analytics.rialto.xyz/assets) — verificatie en tokenized value
-- [Revert Finance](https://revert.finance/) — pool-TVL, actieve TVL, volume, fees en bruto fee-APR
-- [Robinhood Stock Token docs](https://docs.robinhood.com/chain/stock-tokens/) — juridische en technische context
-- [Robinhood contracts](https://docs.robinhood.com/chain/contracts/) — canonieke contractadressen
-- [Revert security](https://docs.revert.finance/revert/resources/security) — audits en risicokader
+- [StonksOnChain](https://stonksonchain.lol/) — meme-pair count and popularity volume
+- [Rialto Assets](https://analytics.rialto.xyz/assets) — asset verification and tokenized value
+- [Revert Finance](https://revert.finance/) — pool TVL, active TVL, volume, fees and gross fee APR
+- [Robinhood Stock Token docs](https://docs.robinhood.com/chain/stock-tokens/) — legal and technical context
+- [Robinhood contracts](https://docs.robinhood.com/chain/contracts/) — canonical contract addresses
+- [Revert security](https://docs.revert.finance/revert/resources/security) — audits and risk context
 - [Uniswap IL](https://support.uniswap.org/hc/en-us/articles/20904453751693-What-is-Impermanent-Loss) — impermanent loss
 
-## Canonieke chaingegevens
+## Canonical chain data
 
 - Robinhood Chain ID: `4663`
 - WETH: `0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73`
 - USDG: `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168`
 
-Controleer adressen bij iedere release opnieuw tegen de officiële contractdocumentatie.
+Recheck these addresses against the official contract documentation before every release.
 
-## Naar live data migreren
+## Migrating to live data
 
-Implementeer een nieuwe `DashboardDataProvider` in `lib/data`, bijvoorbeeld `live.ts`, en laat `lib/data/index.ts` op basis van `DATA_SOURCE` de juiste provider kiezen. Normaliseer alle upstreamvelden naar `DashboardData`; UI-componenten mogen geen bronspecifieke responsevormen kennen.
+Implement a new `DashboardDataProvider` in `lib/data`, for example `live.ts`, and let `lib/data/index.ts` select the provider based on `DATA_SOURCE`. Normalize every upstream field into `DashboardData`; UI components should never depend on source-specific response formats.
 
-Aanbevolen pipeline:
+Recommended pipeline:
 
-1. Haal StonksOnChain-ranking en Rialto-assets op.
-2. Haal Revert-pools voor `network=Robinhood` en `RWA=true` op.
-3. Controleer tokenadressen tegen Rialto/Robinhood; symbol matching alleen is onvoldoende.
-4. Behoud uitsluitend pools met het canonieke USDG- of WETH-adres.
-5. Bereken 1d/7d/30d bruto fee-APR uit fees en actieve TVL.
-6. Voer validatie en anomaliedetectie uit.
-7. Schrijf een gedateerde, immutable snapshot; serveer nooit een halfgevulde ingest.
+1. Fetch the StonksOnChain ranking and Rialto assets.
+2. Fetch Revert pools for `network=Robinhood` and `RWA=true`.
+3. Verify token addresses against Rialto and Robinhood; symbol matching is insufficient.
+4. Keep only pools using the canonical USDG or WETH address.
+5. Calculate 1d, 7d and 30d gross fee APR from fees and active TVL.
+6. Run validation and anomaly detection.
+7. Write a dated, immutable snapshot; never serve a partially completed ingest.
 
-## Validatieregels
+## Validation rules
 
-- Verwerp niet-eindige, negatieve of absurd grote waarden.
-- Markeer volume/TVL-ratio’s boven een configureerbare grens voor review.
-- Vereis `fees ≈ volume × feeTier`; grote afwijkingen blokkeren publicatie.
-- Gebruik actieve TVL als APR-noemer; markeer wanneer alleen totale TVL beschikbaar is.
-- Label pools jonger dan 30 dagen als `partial-history`.
-- Cap APR-input in de opportunityscore; bewaar de ruwe waarde voor weergave.
-- Sla bron-URL, contractadres, chain ID en extractietijd op.
+- Reject non-finite, negative or absurdly large values.
+- Flag volume/TVL ratios above a configurable threshold for review.
+- Require `fees ≈ volume × feeTier`; large deviations block publication.
+- Use active TVL as the APR denominator and flag records where only total TVL is available.
+- Label pools younger than 30 days as `partial-history`.
+- Cap APR input in the opportunity score while retaining the raw value for display.
+- Store source URL, contract address, chain ID and extraction time.
 
-Een waargenomen PACK/THROBBIN-rij met circa `$1,50 × 10^41` volume maar slechts `$6.188` fees is bewust uitgesloten: dit is een voorbeeld van waarom een numeriek veld zonder kruisvalidatie niet publiceerbaar is.
+An observed PACK/THROBBIN row with approximately `$1.50 × 10^41` in volume but only `$6,188` in fees was deliberately excluded. It demonstrates why numerical fields are not publishable without cross-validation.
 
-## APR en IL
+## APR and IL
 
-Revert fee-APR is **bruto** en sluit divergence loss uit. De IL-kolom bevat handmatige 30-daagse scenariobanden op basis van de volatiliteitsklasse van het pair. Voor live gebruik moet een simulator historische of geïmpliceerde volatiliteit, gekozen prijsrange, hedge, rebalancefrequentie en gas meenemen.
+Revert fee APR is **gross** and excludes divergence loss. The IL column contains manual 30-day scenario bands based on each pair's volatility class. A live simulator should include historical or implied volatility, the selected price range, hedging, rebalance frequency and gas.
 
-Richtwaarden uit de snapshot:
+Snapshot planning ranges:
 
-- gevestigde Stock/USDG-pools: planning circa 40–180% bruto, 20–120% netto in gunstige regimes;
-- Stock/WETH: hogere fee-potentie, maar veel hogere relatieve volatiliteit;
-- pure memecoin LP: waargenomen bruto fee-APR circa 650–3.850%, met potentieel totaalverlies.
+- established Stock/USDG pools: approximately 40–180% gross and 20–120% net in favorable regimes;
+- Stock/WETH: higher fee potential with substantially higher relative volatility;
+- pure memecoin LP: observed gross fee APR around 650–3,850%, with potential total loss.
 
-Dit zijn geen garanties. Yield kan binnen uren verdwijnen wanneer volume, prijs of actieve liquiditeit verandert.
+These are not guarantees. Yield can disappear within hours when volume, price or active liquidity changes.
 
-## Refresh en caching
+## Refresh and caching
 
-De GitHub Pages-versie is volledig statisch. De refreshknop bevestigt een nieuwe clientsessie en actualiseert alleen `generatedAt`; `measuredAt` blijft bewust gelijk. Zo wordt een historische researchsnapshot nooit als nieuwe marktmeting gepresenteerd.
+The GitHub Pages version is fully static. The refresh button confirms a new client session and updates `generatedAt` only; `measuredAt` deliberately remains unchanged. A historical research snapshot is therefore never presented as a new market measurement.
 
-Voor live productie is het verstandiger de ingest asynchroon te draaien en een gevalideerd JSON-bestand tijdens de Pages-build te genereren, of de laatste snapshot via een CORS-toegankelijke API/object store te serveren. Roep geen drie fragiele scrapers synchroon vanuit de browser aan.
+For live production, run ingestion asynchronously and generate a validated JSON file during the Pages build, or serve the latest snapshot through a CORS-enabled API or object store. Do not call three fragile scrapers synchronously from the browser.
 
-## Onderhoudschecklist
+## Maintenance checklist
 
-- Dagelijks: contractallowlist, poolstatus en datavalidatie.
-- Per ingest: schema- en anomaliechecks.
-- Wekelijks: risicoscore en IL-aannames herijken.
-- Maandelijks: upstreamvoorwaarden, audits en chain-governance controleren.
+- Daily: verify the contract allowlist, pool status and data validation.
+- Every ingest: run schema and anomaly checks.
+- Weekly: recalibrate risk scores and IL assumptions.
+- Monthly: review upstream terms, audits and chain governance.

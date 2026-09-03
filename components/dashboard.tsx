@@ -23,7 +23,7 @@ const riskStyles: Record<RiskLevel, string> = {
   medium: "border-warning/40 bg-warning/5 text-warning",
   high: "border-danger/40 bg-danger/5 text-danger",
 };
-const riskLabels: Record<RiskLevel, string> = { low: "Laag", medium: "Medium", high: "Hoog" };
+const riskLabels: Record<RiskLevel, string> = { low: "Low", medium: "Medium", high: "High" };
 
 function SectionTitle({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
   return (
@@ -122,10 +122,10 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
             <div className="p-4 sm:p-6 lg:border-r lg:border-border">
               <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#42d7ff]">&gt; Stock Token liquidity intelligence</p>
               <h1 className="mt-3 max-w-4xl text-3xl font-black uppercase leading-[1.02] tracking-[-0.05em] text-foreground sm:text-5xl">
-                Verdien aan de hype.<br /><span className="text-primary">Niet aan de rugpull.</span>
+                Earn from the hype.<br /><span className="text-primary">Not from the rug pull.</span>
               </h1>
               <p className="mt-4 max-w-3xl border-l border-warning pl-3 text-xs leading-5 text-muted">
-                Scan Stock Token-pools tegen USDG of WETH. Rangschik op fee-efficiëntie, liquiditeit en risicokwaliteit. Bruto APR is een signaal — geen belofte.
+                Scan Stock Token pools paired with USDG or WETH. Rank by fee efficiency, liquidity and risk quality. Gross APR is a signal — not a promise.
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
                 <Button asChild><a href="#pools">F2 / Open scanner <ArrowUpRight className="size-3.5" /></a></Button>
@@ -133,9 +133,9 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
               </div>
             </div>
             <div className="grid grid-cols-2 content-stretch bg-card/40">
-              <Metric label="Kandidaatpools" value={integer.format(data.market.candidatePoolCount)} detail={`${data.market.usdGPools} USDG · ${data.market.wethPools} WETH`} />
-              <Metric label="Kandidaat-TVL" value={compactUsd.format(data.market.candidateTvl)} detail="RWA-filter, Revert" />
-              <Metric label="24u volume" value={compactUsd.format(data.market.candidateVolume24h)} detail="Kandidaatuniversum" />
+              <Metric label="Candidate pools" value={integer.format(data.market.candidatePoolCount)} detail={`${data.market.usdGPools} USDG · ${data.market.wethPools} WETH`} />
+              <Metric label="Candidate TVL" value={compactUsd.format(data.market.candidateTvl)} detail="RWA filter, Revert" />
+              <Metric label="24h volume" value={compactUsd.format(data.market.candidateVolume24h)} detail="Candidate universe" />
               <Metric label="Rialto assets" value={integer.format(data.market.rialtoAssets)} detail={compactUsd.format(data.market.rialtoTokenizedValue)} />
             </div>
           </div>
@@ -145,14 +145,14 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
           <span className="inline-flex items-center gap-2"><Database className="size-3 text-primary" /> As-of {formatDateTime(data.measuredAt)} · Research snapshot v{data.methodologyVersion}</span>
           <div className="flex items-center gap-2">
             <span>Refresh {formatDateTime(data.generatedAt)}</span>
-            <Button size="sm" variant="ghost" onClick={refresh} disabled={isPending} aria-label="Data vernieuwen">
+            <Button size="sm" variant="ghost" onClick={refresh} disabled={isPending} aria-label="Refresh data">
               <RefreshCw className={cn("size-3", isPending && "animate-spin")} /> Refresh
             </Button>
           </div>
         </div>
 
         <section id="stocks" className="scroll-mt-24 pt-10">
-          <SectionTitle eyebrow="01 · Meme-basisvraag" title="Stocks die de meeste coins aantrekken" copy="Gerangschikt op aantal meme-pairs op StonksOnChain. Populariteit is een vraagindicator, geen kwaliteitsstempel." />
+          <SectionTitle eyebrow="01 · Meme base demand" title="Stocks attracting the most coins" copy="Ranked by meme-pair count on StonksOnChain. Popularity is a demand indicator, not a quality seal." />
           <div className="grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
             {data.stocks.map((stock) => (
               <Card key={stock.symbol} className="group border-0 bg-black p-3 transition-colors hover:bg-primary/[0.05]">
@@ -174,7 +174,7 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
         </section>
 
         <section className="pt-10">
-          <SectionTitle eyebrow="02 · Beste setup" title="Top opportunities binnen de defensievere route" copy="De score weegt liquiditeit, fees, historie, datakwaliteit en risico. Hij rangschikt; hij voorspelt niet." />
+          <SectionTitle eyebrow="02 · Best setups" title="Top opportunities on the defensive route" copy="The score weighs liquidity, fees, history, data quality and risk. It ranks; it does not predict." />
           <div className="grid gap-px border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
             {topPools.map((pool, index) => (
               <Card key={pool.id} className="relative overflow-hidden border-0 bg-black">
@@ -193,14 +193,14 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
         </section>
 
         <section id="pools" className="scroll-mt-24 pt-10">
-          <SectionTitle eyebrow="03 · Opportunity scanner" title="Stock Token LP-kansen" copy="Alle APR-cijfers zijn bruto fee-APR. IL-schattingen zijn scenario-banden voor 30 dagen, niet gerealiseerde verliezen of garanties." />
+          <SectionTitle eyebrow="03 · Opportunity scanner" title="Stock Token LP opportunities" copy="All APR figures are gross fee APR. IL estimates are 30-day scenario bands, not realized losses or guarantees." />
           <Card className="overflow-hidden">
             <div className="terminal-bar flex flex-col gap-2 border-b border-primary/30 p-2 lg:flex-row lg:items-center">
-              <div className="relative min-w-0 flex-1"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" /><Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Zoek op NVDA, SPY, USDG…" className="pl-9" /></div>
+              <div className="relative min-w-0 flex-1"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" /><Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search NVDA, SPY, USDG…" className="pl-9" /></div>
               <div className="grid grid-cols-3 gap-1">
-                <label className="relative"><span className="sr-only">Pair</span><select value={pair} onChange={(e) => setPair(e.target.value as PairFilter)} className="h-9 w-full appearance-none border border-border bg-black px-2 pr-7 text-[10px] font-bold uppercase outline-none focus:border-primary"><option value="all">Alle pairs</option><option value="USDG">USDG</option><option value="WETH">WETH</option></select><Filter className="pointer-events-none absolute right-2 top-3 size-3 text-primary" /></label>
-                <label><span className="sr-only">Risico</span><select value={risk} onChange={(e) => setRisk(e.target.value as RiskFilter)} className="h-9 w-full border border-border bg-black px-2 text-[10px] font-bold uppercase outline-none focus:border-primary"><option value="all">Alle risico’s</option><option value="low">Laag</option><option value="medium">Medium</option><option value="high">Hoog</option></select></label>
-                <label><span className="sr-only">Sortering</span><select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="h-9 w-full border border-border bg-black px-2 text-[10px] font-bold uppercase outline-none focus:border-primary"><option value="score">Slimme score</option><option value="tvl">TVL</option><option value="volume24h">Volume</option><option value="fees24h">Fees</option><option value="apr30d">30d APR</option></select></label>
+                <label className="relative"><span className="sr-only">Pair</span><select value={pair} onChange={(e) => setPair(e.target.value as PairFilter)} className="h-9 w-full appearance-none border border-border bg-black px-2 pr-7 text-[10px] font-bold uppercase outline-none focus:border-primary"><option value="all">All pairs</option><option value="USDG">USDG</option><option value="WETH">WETH</option></select><Filter className="pointer-events-none absolute right-2 top-3 size-3 text-primary" /></label>
+                <label><span className="sr-only">Risk</span><select value={risk} onChange={(e) => setRisk(e.target.value as RiskFilter)} className="h-9 w-full border border-border bg-black px-2 text-[10px] font-bold uppercase outline-none focus:border-primary"><option value="all">All risks</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>
+                <label><span className="sr-only">Sort</span><select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="h-9 w-full border border-border bg-black px-2 text-[10px] font-bold uppercase outline-none focus:border-primary"><option value="score">Smart score</option><option value="tvl">TVL</option><option value="volume24h">Volume</option><option value="fees24h">Fees</option><option value="apr30d">30d APR</option></select></label>
               </div>
             </div>
             <div className="scrollbar-thin overflow-x-auto">
@@ -218,36 +218,36 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
                   </tr>
                 ))}</tbody>
               </table>
-              {pools.length === 0 && <div className="p-10 text-center text-sm text-muted">Geen pools voor deze filters.</div>}
+              {pools.length === 0 && <div className="p-10 text-center text-sm text-muted">No pools match these filters.</div>}
             </div>
           </Card>
         </section>
 
         <section id="risk" className="scroll-mt-24 pt-10">
-          <SectionTitle eyebrow="04 · Risico vóór rendement" title="Hoge APR is vaak een alarmsignaal, geen cadeautje" copy="Fee-APR telt alleen handelsfees. Divergence loss, range management, gas, slippage, issuer- en contractrisico komen daar nog vanaf." />
+          <SectionTitle eyebrow="04 · Risk before return" title="High APR is often a warning, not a gift" copy="Fee APR counts trading fees only. Divergence loss, range management, gas, slippage, issuer risk and contract risk still have to be deducted." />
           <div className="grid gap-2 lg:grid-cols-[.9fr_1.1fr]">
             <Card className="border-danger/20 bg-danger/[0.035]">
               <div className="flex items-center gap-2 border-b border-danger/30 bg-danger/10 px-3 py-1.5 text-[9px] font-bold uppercase text-danger"><AlertTriangle className="size-3.5" /> Alert: tail risk</div>
-              <CardHeader><h3 className="text-lg font-black uppercase text-danger">Pure memecoin LP</h3><p className="mt-2 text-[11px] leading-5 text-muted">Voorbeelden tonen bruto 30d fee-APR’s van circa 650% tot 3.850%. Eén rugpull, honeypot of liquiditeitsvlucht kan meer dan alle fees uitwissen.</p></CardHeader>
-              <CardContent><ul className="space-y-2 text-[10px] uppercase text-muted">{["Onbegrensd token- en rugrisico", "APR stort in wanneer volume verhuist", "Out-of-range posities stoppen met verdienen", "Extremen kunnen datakwaliteitsfouten zijn"].map((item) => <li key={item} className="flex gap-2"><span className="mt-1.5 h-px w-2 shrink-0 bg-danger" />{item}</li>)}</ul></CardContent>
+              <CardHeader><h3 className="text-lg font-black uppercase text-danger">Pure memecoin LP</h3><p className="mt-2 text-[11px] leading-5 text-muted">Samples show gross 30-day fee APRs from roughly 650% to 3,850%. A single rug pull, honeypot or liquidity flight can erase more than all accumulated fees.</p></CardHeader>
+              <CardContent><ul className="space-y-2 text-[10px] uppercase text-muted">{["Unbounded token and rug risk", "APR collapses when volume moves", "Out-of-range positions stop earning", "Extremes may be data-quality errors"].map((item) => <li key={item} className="flex gap-2"><span className="mt-1.5 h-px w-2 shrink-0 bg-danger" />{item}</li>)}</ul></CardContent>
             </Card>
             <Card>
               <div className="terminal-bar flex items-center justify-between px-3 py-1.5 text-[9px] font-bold uppercase text-primary"><span>Chart // Gross fee APR</span><BarChart3 className="size-3.5" /></div>
-              <CardHeader><h3 className="text-lg font-black uppercase">Rendement versus staart­risico</h3></CardHeader>
+              <CardHeader><h3 className="text-lg font-black uppercase">Return versus tail risk</h3></CardHeader>
               <CardContent><StrategyChart /><p className="mt-2 border-t border-border pt-2 text-[9px] uppercase leading-4 text-muted">Representative snapshot observations // Pure-meme bar capped at 2,400% // Stock/USDG planning range: 40–180% gross, 20–120% net in favorable regimes.</p></CardContent>
             </Card>
           </div>
           <div className="mt-2 grid gap-2 md:grid-cols-3">
             {[
-              { icon: ShieldCheck, title: "Juridische vorm", text: "Stock Tokens zijn schuldinstrumenten. Ze geven geen aandeelhoudersrechten in het onderliggende aandeel." },
-              { icon: TrendingUp, title: "IL & range", text: "Concentrated liquidity vergroot kapitaalefficiëntie én het risico dat je buiten range eindigt." },
-              { icon: Database, title: "Bronkwaliteit", text: "Onmogelijke volumes en ontbrekende actieve TVL worden geweerd of expliciet gemarkeerd." },
+              { icon: ShieldCheck, title: "Legal structure", text: "Stock Tokens are debt instruments. They do not grant shareholder rights in the underlying equity." },
+              { icon: TrendingUp, title: "IL & range", text: "Concentrated liquidity increases capital efficiency and the risk of ending up out of range." },
+              { icon: Database, title: "Source quality", text: "Impossible volumes and missing active TVL are rejected or explicitly flagged." },
             ].map(({ icon: Icon, title, text }, index) => <Card key={title} className="p-3"><div className="flex items-center justify-between border-b border-border pb-2"><Icon className="size-3.5 text-primary" /><span className="text-[8px] text-muted">RISK_0{index + 1}</span></div><h3 className="market-yellow mt-3 text-xs font-black uppercase">{title}</h3><p className="mt-1.5 text-[10px] leading-4 text-muted">{text}</p></Card>)}
           </div>
         </section>
 
         <footer className="mt-10 border-t border-primary/40 bg-card px-3 py-3 text-[9px] uppercase leading-4 text-muted">
-          <div className="flex flex-col justify-between gap-3 sm:flex-row"><p className="max-w-3xl"><span className="text-warning">Disclaim //</span> Researchtool, geen financieel advies. Controleer contractadres, poolstatus, toepasselijke jurisdictie en actuele data vóór iedere transactie.</p><div className="flex flex-wrap gap-4"><a className="text-primary hover:bg-primary hover:text-black" href="https://docs.robinhood.com/chain/stock-tokens/" target="_blank" rel="noreferrer">Robinhood docs</a><a className="text-primary hover:bg-primary hover:text-black" href="https://docs.revert.finance/revert/resources/security" target="_blank" rel="noreferrer">Revert security</a><a className="text-primary hover:bg-primary hover:text-black" href="https://support.uniswap.org/hc/en-us/articles/20904453751693-What-is-Impermanent-Loss" target="_blank" rel="noreferrer">IL uitleg</a></div></div>
+          <div className="flex flex-col justify-between gap-3 sm:flex-row"><p className="max-w-3xl"><span className="text-warning">Disclaimer //</span> Research tool, not financial advice. Verify contract addresses, pool status, applicable jurisdiction and current data before every transaction.</p><div className="flex flex-wrap gap-4"><a className="text-primary hover:bg-primary hover:text-black" href="https://docs.robinhood.com/chain/stock-tokens/" target="_blank" rel="noreferrer">Robinhood docs</a><a className="text-primary hover:bg-primary hover:text-black" href="https://docs.revert.finance/revert/resources/security" target="_blank" rel="noreferrer">Revert security</a><a className="text-primary hover:bg-primary hover:text-black" href="https://support.uniswap.org/hc/en-us/articles/20904453751693-What-is-Impermanent-Loss" target="_blank" rel="noreferrer">IL guide</a></div></div>
         </footer>
       </div>
     </main>

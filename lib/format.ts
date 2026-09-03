@@ -1,12 +1,12 @@
 function localized(value: number, digits = 2) {
-  return value.toFixed(digits).replace(/\.0+$|(?<=\.[0-9])0+$/, "").replace(".", ",");
+  return value.toFixed(digits).replace(/\.0+$|(?<=\.[0-9])0+$/, "");
 }
 
 export const compactUsd = {
   format(value: number) {
     const absolute = Math.abs(value);
-    if (absolute >= 1_000_000_000) return `US$ ${localized(value / 1_000_000_000)} mld.`;
-    if (absolute >= 1_000_000) return `US$ ${localized(value / 1_000_000)} mln.`;
+    if (absolute >= 1_000_000_000) return `US$ ${localized(value / 1_000_000_000)}B`;
+    if (absolute >= 1_000_000) return `US$ ${localized(value / 1_000_000)}M`;
     if (absolute >= 1_000) return `US$ ${localized(value / 1_000)}K`;
     return `US$ ${Math.round(value)}`;
   },
@@ -14,7 +14,7 @@ export const compactUsd = {
 
 export const integer = {
   format(value: number) {
-    return Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   },
 };
 

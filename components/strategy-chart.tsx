@@ -10,7 +10,7 @@ const data = [
 
 export function StrategyChart() {
   return (
-    <div className="h-64 w-full" aria-label="Vergelijking van bruto fee-APR-ranges">
+    <div className="h-64 w-full" aria-label="Gross fee APR range comparison">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 12, right: 8, left: -18, bottom: 0 }}>
           <CartesianGrid stroke="rgba(255,142,0,.12)" vertical={false} strokeDasharray="2 2" />
@@ -19,7 +19,7 @@ export function StrategyChart() {
           <Tooltip
             cursor={{ fill: "rgba(255,255,255,.03)" }}
             contentStyle={{ background: "#050505", border: "1px solid #ff8e00", borderRadius: 0, fontFamily: "monospace", fontSize: 11 }}
-            formatter={(value) => [`${Number(value)}%`, "Bruto fee-APR"]}
+            formatter={(value) => [`${Number(value)}%`, "Gross fee APR"]}
           />
           <Bar dataKey="observed" radius={[5, 5, 0, 0]}>
             {data.map((entry, index) => <Cell key={entry.name} fill={index === 2 ? "#ff4b45" : index === 1 ? "#42d7ff" : "#39ff68"} />)}
