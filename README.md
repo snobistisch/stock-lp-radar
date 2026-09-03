@@ -24,7 +24,7 @@ De score is een rangschikkingsheuristiek, geen rendementsvoorspelling.
 
 - Next.js 15 App Router + TypeScript
 - Server Component voor initiële data
-- Route Handler + client refresh voor actuele herlaadacties
+- Statische dataprovider + client refresh, compatibel met GitHub Pages
 - Tailwind CSS + shadcn/ui-compatibele componenten
 - Recharts
 - Dark mode standaard, responsive en Vercel-ready
@@ -59,9 +59,17 @@ npm run build
 4. Neem de gewenste variabelen uit `.env.example` over.
 5. Deploy; er is geen aangepaste buildconfiguratie nodig.
 
+## GitHub Pages
+
+De repository bevat een statische Next.js-export en een Pages-workflow. Iedere push naar `main` bouwt en publiceert automatisch naar:
+
+[https://snobistisch.github.io/stock-lp-radar/](https://snobistisch.github.io/stock-lp-radar/)
+
+De workflow stelt `NEXT_PUBLIC_BASE_PATH=/stock-lp-radar` in, voert typecheck en lint uit, bouwt `out/` en deployt dat artefact via GitHub Pages. Handmatig starten kan via **Actions → Deploy GitHub Pages → Run workflow**.
+
 ## Datasnapshot
 
-De meegeleverde versie gebruikt een onderzoeksmeting van **3 september 2026, 19:04 CEST**. De refreshknop haalt de genormaliseerde API-route opnieuw op, maar verandert bij `DATA_SOURCE=static` niet de onderliggende meetwaarden. Zie [DATA.md](./DATA.md) voor brondefinities, validatieregels en het live-migratiepad.
+De meegeleverde versie gebruikt een onderzoeksmeting van **3 september 2026, 19:04 CEST**. De refreshknop vernieuwt de lokale sessietimestamp, maar verandert bij `DATA_SOURCE=static` niet de onderliggende meetwaarden. Zie [DATA.md](./DATA.md) voor brondefinities, validatieregels en het live-migratiepad.
 
 ## Structuur
 

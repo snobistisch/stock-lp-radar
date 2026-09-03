@@ -62,7 +62,6 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
   const [risk, setRisk] = useState<RiskFilter>("all");
   const [sort, setSort] = useState<SortKey>("score");
   const [isPending, startTransition] = useTransition();
-  const [refreshError, setRefreshError] = useState<string | null>(null);
 
   const pools = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -78,16 +77,11 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
     [data.pools],
   );
 
-  async function refresh() {
-    setRefreshError(null);
-    startTransition(async () => {
-      try {
-        const response = await fetch("/api/dashboard", { cache: "no-store" });
-        if (!response.ok) throw new Error("refresh failed");
-        setData(await response.json() as DashboardData);
-      } catch {
-        setRefreshError("Vernieuwen mislukt. De laatste geldige snapshot blijft zichtbaar.");
-      }
+  function refresh() {
+    startTransition(() => {
+      // GitHub Pages serves a static research snapshot. This confirms the client
+      // session refreshed without pretending the measured market data changed.
+      setData((current) => ({ ...current, generatedAt: new Date().toISOString() }));
     });
   }
 
@@ -156,7 +150,6 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
             </Button>
           </div>
         </div>
-        {refreshError && <p role="alert" className="mt-2 text-xs text-danger">{refreshError}</p>}
 
         <section id="stocks" className="scroll-mt-24 pt-10">
           <SectionTitle eyebrow="01 · Meme-basisvraag" title="Stocks die de meeste coins aantrekken" copy="Gerangschikt op aantal meme-pairs op StonksOnChain. Populariteit is een vraagindicator, geen kwaliteitsstempel." />

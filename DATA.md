@@ -71,7 +71,9 @@ Dit zijn geen garanties. Yield kan binnen uren verdwijnen wanneer volume, prijs 
 
 ## Refresh en caching
 
-`GET /api/dashboard` gebruikt `Cache-Control: no-store`. Voor productie is het verstandiger de ingest asynchroon te draaien en de laatste gevalideerde snapshot via een database of object store te serveren. Gebruik geen pagina-request om drie fragiele scrapers synchroon aan te roepen.
+De GitHub Pages-versie is volledig statisch. De refreshknop bevestigt een nieuwe clientsessie en actualiseert alleen `generatedAt`; `measuredAt` blijft bewust gelijk. Zo wordt een historische researchsnapshot nooit als nieuwe marktmeting gepresenteerd.
+
+Voor live productie is het verstandiger de ingest asynchroon te draaien en een gevalideerd JSON-bestand tijdens de Pages-build te genereren, of de laatste snapshot via een CORS-toegankelijke API/object store te serveren. Roep geen drie fragiele scrapers synchroon vanuit de browser aan.
 
 ## Onderhoudschecklist
 
